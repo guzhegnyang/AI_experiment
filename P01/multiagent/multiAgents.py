@@ -160,6 +160,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
+        """ 
+        # 理论课件上的伪代码实现
         def AlphaBeta(n, Player, alpha, beta, level):
           if Player >= n.getNumAgents():
               Player = 0
@@ -182,6 +184,35 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
               beta = V
               optimal = (action, beta)
             if beta <= alpha:
+              break
+          return optimal
+        """
+        def AlphaBeta(n, Player, alpha, beta, level):
+          if Player >= n.getNumAgents():
+              Player = 0
+              level += 1
+          if level is self.depth:
+            return (None, self.evaluationFunction(n))
+          actions = n.getLegalActions(Player)
+          if actions == []:
+            return (None, self.evaluationFunction(n))
+          if Player is self.index:
+            optimal = (None, -float("inf"))
+          else:
+            optimal = (None, float("inf"))
+          for action in actions:
+            V = AlphaBeta(n.generateSuccessor(Player, action), Player + 1, alpha, beta, level)[1]
+            if Player is self.index:
+              if V > optimal[1]:
+                optimal = (action, V)
+                if V > alpha:
+                  alpha = V
+            else:
+              if V < optimal[1]:
+                optimal = (action, V)
+                if V < beta:
+                  beta = V
+            if beta < alpha:
               break
           return optimal
         return AlphaBeta(gameState, 0, -float("inf"), float("inf"), 0)[0]

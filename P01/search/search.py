@@ -118,7 +118,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             self.f = self.h + g
             self.action = action
             self.predecessor = predecessor
-            visited.add(state)
         def __lt__(self, other):  # operator <
             if self.f == other.f:
                 return self.h < other.h
@@ -128,7 +127,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     frontier.put(My_state(problem.getStartState(), 0, list()))
     while not frontier.empty():
         current = frontier.get()
-        if current not in visited:
+        if current.state not in visited:
+            visited.add(current.state)
             if problem.isGoalState(current.state):
                 actions = list()
                 while current.predecessor is not None:

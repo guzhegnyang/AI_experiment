@@ -482,7 +482,8 @@ def foodHeuristic(state, problem):
     else:
         return max([abs(position[0] - x) + abs(position[0] - y) for x, y in foodGrid.asList()])
     """
-    # 返回上下左右四个方向最远食物距离和，若某方向无食物则设0
+    """
+    # h值较小的方案，返回上下左右四个方向最远食物距离和，若某方向无食物则设0
     # 若横向移动，不会因为纵向改变h值
     # 若横向两个方向有food，横向移动不会改变h值
     # 若横向一个方向有food，横向移动h值最多减小1
@@ -503,6 +504,21 @@ def foodHeuristic(state, problem):
         if position[1] < y and max_down < y - position[1]:
             max_down = y - position[1]
     return max_left + max_right + max_up + max_down
+    """
+    # 在未吃到最远端food时，第一项是常数，后两项最多减少1
+    # 不妨设x0<=x1<=x2，y0<=y1<=y2，在吃到最远端前返回(x2-x0)+(y2-y0)+1+0，则吃到之后返回(x1-x0)+(y1-y0)+(x2-x1)+(y2-y1)即减少1
+    foodList = foodGrid.asList()
+    if foodList == []:
+        return 0
+    x_list = [x for x, y in foodList]
+    y_list = [y for x, y in foodList]
+    max_left = min(x_list)
+    max_right = max(x_list)
+    max_up = min(y_list)
+    max_down = max(y_list)
+    return (max_right - max_left) + (max_down - max_up)\
+        + min(abs(position[0] - max_left), abs(position[0] - max_right))\
+        + min(abs(position[1] - max_up), abs(position[1] - max_down))
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
